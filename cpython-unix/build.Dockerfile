@@ -26,3 +26,6 @@ RUN apt-get install \
     xz-utils \
     unzip \
     zlib1g-dev
+
+RUN apt-get install crossbuild-essential-arm64 &&\
+    apt-get install crossbuild-essential-armhf

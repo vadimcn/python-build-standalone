@@ -45,7 +45,7 @@ fi
 # So we have to force a value.
 if [ "${BUILD_TRIPLE}" != "${TARGET_TRIPLE}" ]; then
   case "${TARGET_TRIPLE}" in
-    i686-unknown-linux-gnu)
+    *-linux-*)
       EXTRA_FLAGS="${EXTRA_FLAGS} --enable-malloc0returnsnull"
       ;;
 

@@ -82,6 +82,11 @@ def install_sccache(build_env):
             build_env.copy_file(candidate)
             return
 
+def cross_compiling(build_platform, target_triple):
+    if "linux" in build_platform and "x86_64" not in target_triple:
+        return True
+    else:
+        return False
 
 def add_target_env(env, build_platform, target_triple, build_env):
     add_env_common(env)
@@ -99,12 +104,12 @@ def add_target_env(env, build_platform, target_triple, build_env):
 
         if target_triple in ("x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl"):
             env["TARGET_TRIPLE"] = "x86_64-unknown-linux-gnu"
-        elif target_triple == "i686-unknown-linux-gnu":
-            env["TARGET_TRIPLE"] = "i686-unknown-linux-gnu"
-            extra_target_cflags.append("-m32")
-            extra_target_ldflags.append("-m32")
         else:
-            raise Exception("unhandled target triple: %s" % target_triple)
+            env["TARGET_TRIPLE"] = target_triple
+            extra_target_cflags.append("--target=" + target_triple)
+            extra_target_ldflags.append("--target=" + target_triple)
+            env["READELF"] = "llvm-readelf"
+            env["STRIP"] = "llvm-strip"            
 
     if build_platform == "macos":
         machine = platform.machine()
@@ -273,6 +278,7 @@ def simple_build(
             binutils=install_binutils(host_platform),
             clang=True,
             musl="musl" in target_triple,
+            target_triple=target_triple,
         )
 
         for a in extra_archives or []:
@@ -283,6 +289,7 @@ def simple_build(
 
         env = {
             "CC": "clang",
+            "BUILD_CC": " clang",
             "TOOLCHAIN": "clang-%s" % host_platform,
             "%s_VERSION" % entry.upper().replace("-", "_"): DOWNLOADS[entry]["version"],
         }
@@ -451,6 +458,7 @@ def build_libedit(
             binutils=install_binutils(host_platform),
             clang=True,
             musl="musl" in target_triple,
+            target_triple=target_triple,
         )
 
         build_env.install_artifact_archive(
@@ -486,6 +494,7 @@ def build_readline(
             binutils=True,
             clang=True,
             musl="musl" in target_triple,
+            target_triple=target_triple,
         )
 
         build_env.install_artifact_archive(
@@ -521,6 +530,7 @@ def build_tix(client, image, host_platform, target_triple, optimizations, dest_a
             binutils=install_binutils(host_platform),
             clang=True,
             musl="musl" in target_triple,
+            target_triple=target_triple,
         )
 
         depends = {"tcl", "tk"}
@@ -836,6 +846,7 @@ def build_cpython(
             binutils=install_binutils(host_platform),
             clang=True,
             musl="musl" in target_triple,
+            target_triple=target_triple,
         )
 
         packages = target_needs(TARGETS_CONFIG, target_triple)
