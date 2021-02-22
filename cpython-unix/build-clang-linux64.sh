@@ -93,76 +93,76 @@ else
   NUM_JOBS=${NUM_CPUS}
 fi
 
-# Stage 1: Build with GCC.
-mkdir stage1
-pushd stage1
-cmake \
-    -G Ninja \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/tools/clang-stage1 \
-    -DCMAKE_C_COMPILER=/tools/host/bin/gcc \
-    -DCMAKE_CXX_COMPILER=/tools/host/bin/g++ \
-    -DCMAKE_ASM_COMPILER=/tools/host/bin/gcc \
-    -DCMAKE_CXX_FLAGS="-Wno-cast-function-type" \
-    -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
-    -DLLVM_TARGETS_TO_BUILD=X86 \
-    -DLLVM_TOOL_LIBCXX_BUILD=ON \
-    -DLIBCXX_LIBCPPABI_VERSION="" \
-    -DLLVM_BINUTILS_INCDIR=/tools/host/include \
-    -DLLVM_LINK_LLVM_DYLIB=ON \
-    -DLLVM_INSTALL_UTILS=ON \
-    ${EXTRA_FLAGS} \
-    ../../llvm
+# # Stage 1: Build with GCC.
+# mkdir stage1
+# pushd stage1
+# cmake \
+#     -G Ninja \
+#     -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_INSTALL_PREFIX=/tools/clang-stage1 \
+#     -DCMAKE_C_COMPILER=/tools/host/bin/gcc \
+#     -DCMAKE_CXX_COMPILER=/tools/host/bin/g++ \
+#     -DCMAKE_ASM_COMPILER=/tools/host/bin/gcc \
+#     -DCMAKE_CXX_FLAGS="-Wno-cast-function-type" \
+#     -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
+#     -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
+#     -DLLVM_TARGETS_TO_BUILD=X86 \
+#     -DLLVM_TOOL_LIBCXX_BUILD=ON \
+#     -DLIBCXX_LIBCPPABI_VERSION="" \
+#     -DLLVM_BINUTILS_INCDIR=/tools/host/include \
+#     -DLLVM_LINK_LLVM_DYLIB=ON \
+#     -DLLVM_INSTALL_UTILS=ON \
+#     ${EXTRA_FLAGS} \
+#     ../../llvm
 
-LD_LIBRARY_PATH=/tools/host/lib64 ninja -j ${NUM_JOBS} install
+# LD_LIBRARY_PATH=/tools/host/lib64 ninja -j ${NUM_JOBS} install
 
-mkdir -p /tools/clang-stage1/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}
-cp -av /tools/host/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/* /tools/clang-stage1/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/
-cp -av /tools/host/lib64/* /tools/clang-stage1/lib/
-mkdir -p /tools/clang-stage1/lib32
-cp -av /tools/host/lib32/* /tools/clang-stage1/lib32/
-cp -av /tools/host/include/* /tools/clang-stage1/include/
+# mkdir -p /tools/clang-stage1/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}
+# cp -av /tools/host/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/* /tools/clang-stage1/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/
+# cp -av /tools/host/lib64/* /tools/clang-stage1/lib/
+# mkdir -p /tools/clang-stage1/lib32
+# cp -av /tools/host/lib32/* /tools/clang-stage1/lib32/
+# cp -av /tools/host/include/* /tools/clang-stage1/include/
 
-popd
+# popd
 
-find /tools/clang-stage1 | sort
+# find /tools/clang-stage1 | sort
 
-# Stage 2: Build with GCC built Clang.
-mkdir stage2
-pushd stage2
-cmake \
-    -G Ninja \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/tools/clang-stage2 \
-    -DCMAKE_C_COMPILER=/tools/clang-stage1/bin/clang \
-    -DCMAKE_CXX_COMPILER=/tools/clang-stage1/bin/clang++ \
-    -DCMAKE_ASM_COMPILER=/tools/clang-stage1/bin/clang \
-    -DCMAKE_C_FLAGS="-fPIC" \
-    -DCMAKE_CXX_FLAGS="-fPIC -Qunused-arguments -L/tools/clang-stage1/lib" \
-    -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage1/lib" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage1/lib" \
-    -DLLVM_TARGETS_TO_BUILD=X86 \
-    -DLLVM_TOOL_LIBCXX_BUILD=ON \
-    -DLIBCXX_LIBCPPABI_VERSION="" \
-    -DLLVM_BINUTILS_INCDIR=/tools/host/include \
-    -DLLVM_LINK_LLVM_DYLIB=ON \
-    -DLLVM_INSTALL_UTILS=ON \
-    ${EXTRA_FLAGS} \
-    ../../llvm
+# # Stage 2: Build with GCC built Clang.
+# mkdir stage2
+# pushd stage2
+# cmake \
+#     -G Ninja \
+#     -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_INSTALL_PREFIX=/tools/clang-stage2 \
+#     -DCMAKE_C_COMPILER=/tools/clang-stage1/bin/clang \
+#     -DCMAKE_CXX_COMPILER=/tools/clang-stage1/bin/clang++ \
+#     -DCMAKE_ASM_COMPILER=/tools/clang-stage1/bin/clang \
+#     -DCMAKE_C_FLAGS="-fPIC" \
+#     -DCMAKE_CXX_FLAGS="-fPIC -Qunused-arguments -L/tools/clang-stage1/lib" \
+#     -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage1/lib" \
+#     -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage1/lib" \
+#     -DLLVM_TARGETS_TO_BUILD=X86 \
+#     -DLLVM_TOOL_LIBCXX_BUILD=ON \
+#     -DLIBCXX_LIBCPPABI_VERSION="" \
+#     -DLLVM_BINUTILS_INCDIR=/tools/host/include \
+#     -DLLVM_LINK_LLVM_DYLIB=ON \
+#     -DLLVM_INSTALL_UTILS=ON \
+#     ${EXTRA_FLAGS} \
+#     ../../llvm
 
-LD_LIBRARY_PATH=/tools/clang-stage1/lib ninja -j ${NUM_JOBS} install
+# LD_LIBRARY_PATH=/tools/clang-stage1/lib ninja -j ${NUM_JOBS} install
 
-mkdir -p /tools/clang-stage2/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}
-cp -av /tools/host/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/* /tools/clang-stage2/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/
-cp -av /tools/host/lib64/* /tools/clang-stage2/lib/
-mkdir -p /tools/clang-stage2/lib32
-cp -av /tools/host/lib32/* /tools/clang-stage2/lib32/
-cp -av /tools/host/include/* /tools/clang-stage2/include/
+# mkdir -p /tools/clang-stage2/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}
+# cp -av /tools/host/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/* /tools/clang-stage2/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/
+# cp -av /tools/host/lib64/* /tools/clang-stage2/lib/
+# mkdir -p /tools/clang-stage2/lib32
+# cp -av /tools/host/lib32/* /tools/clang-stage2/lib32/
+# cp -av /tools/host/include/* /tools/clang-stage2/include/
 
-popd
+# popd
 
-find /tools/clang-stage2 | sort
+# find /tools/clang-stage2 | sort
 
 # Stage 3: Build with Clang built Clang.
 #
@@ -176,13 +176,13 @@ cmake \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/tools/clang-linux64 \
-    -DCMAKE_C_COMPILER=/tools/clang-stage2/bin/clang \
-    -DCMAKE_CXX_COMPILER=/tools/clang-stage2/bin/clang++ \
-    -DCMAKE_ASM_COMPILER=/tools/clang-stage2/bin/clang \
+    -DCMAKE_C_COMPILER=/tools/host/bin/gcc \
+    -DCMAKE_CXX_COMPILER=/tools/host/bin/g++ \
+    -DCMAKE_ASM_COMPILER=/tools/host/bin/gcc \
     -DCMAKE_C_FLAGS="-fPIC" \
-    -DCMAKE_CXX_FLAGS="-fPIC -Qunused-arguments -L/tools/clang-stage2/lib" \
-    -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage2/lib" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions -L/tools/clang-stage2/lib" \
+    -DCMAKE_CXX_FLAGS="-Wno-cast-function-type" \
+    -DCMAKE_EXE_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
+    -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic-functions" \
     -DLLVM_TOOL_LIBCXX_BUILD=ON \
     -DLIBCXX_LIBCPPABI_VERSION="" \
     -DLLVM_BINUTILS_INCDIR=/tools/host/include \
@@ -191,7 +191,7 @@ cmake \
     ${EXTRA_FLAGS} \
     ../../llvm
 
-LD_LIBRARY_PATH=/tools/clang-stage2/lib DESTDIR=${ROOT}/out ninja -j ${NUM_JOBS} install
+LD_LIBRARY_PATH=/tools/host/lib64 DESTDIR=${ROOT}/out ninja -j ${NUM_JOBS} install
 
 mkdir -p ${ROOT}/out/tools/clang-linux64/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}
 cp -av /tools/host/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/* ${ROOT}/out/tools/clang-linux64/lib/gcc/x86_64-unknown-linux-gnu/${GCC_VERSION}/
