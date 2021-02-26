@@ -106,8 +106,8 @@ def add_target_env(env, build_platform, target_triple, build_env):
             env["TARGET_TRIPLE"] = "x86_64-unknown-linux-gnu"
         else:
             env["TARGET_TRIPLE"] = target_triple
-            extra_target_cflags.append("--target=" + target_triple)
-            extra_target_ldflags.append("--target=" + target_triple)
+            env["CC_FOR_BUILD"] = "clang"
+            env["CC"] = "cross-clang" if cross_compiling(build_platform, target_triple) else "clang"
             env["READELF"] = "llvm-readelf"
             env["STRIP"] = "llvm-strip"            
 

@@ -27,4 +27,8 @@ RUN apt-get install \
     tar \
     xz-utils \
     unzip \
-    zlib1g-dev
+    zlib1g-dev \
+    binutils-aarch64-linux-gnu \
+    binutils-arm-linux-gnueabihf \
+    libgcc-4.8-dev:arm64 \
+    libgcc-4.8-dev:armhf
