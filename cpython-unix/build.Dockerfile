@@ -16,6 +16,8 @@ RUN apt-get install \
     file \
     libc6-dev \
     libc6-dev:i386 \
+    libc6-dev:arm64 \
+    libc6-dev:armhf \
     libffi-dev \
     make \
     patch \
@@ -26,6 +28,3 @@ RUN apt-get install \
     xz-utils \
     unzip \
     zlib1g-dev
-
-RUN apt-get install crossbuild-essential-arm64 &&\
-    apt-get install crossbuild-essential-armhf
