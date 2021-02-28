@@ -79,21 +79,21 @@ jobs:
       - sccache
     runs-on: 'ubuntu-20.04'
     env:
-      SCCACHE_DIR: ${{ github.workspace }}/.sccache
+      SCCACHE_DIR: /tmp/sccache
     steps:
       - uses: actions/checkout@v2
 
       - name: Cache build dir
         uses: pat-s/always-upload-cache@v2.1.3
         with:
-          path: build/*.tar
+          path: build/
           key: ${{ runner.os }}-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-
 
       - name: Cache sccache dir
         uses: pat-s/always-upload-cache@v2.1.3
         with:
-          path: ${{ github.workspace }}/.sccache
+          path: /tmp/sccache
           key: ${{ runner.os }}-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-
 
